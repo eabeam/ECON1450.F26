@@ -1,0 +1,190 @@
+---
+title: "Supply and Demand"
+subtitle: "ECON 1450: Principles of Microeconomics"
+author: "University of Vermont"
+date: "Fall 2026"
+institute: "Department of Economics"
+format:
+  beamer:
+    theme: ModernMinimal
+    aspectratio: 169
+    navigation: horizontal
+    section-titles: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+#| include: false
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+theme_econ <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.2)),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "gray95", linewidth = 0.3),
+      axis.line = element_line(color = "#424242", linewidth = 0.6),
+      axis.text = element_text(size = rel(1.1), color = "#424242"),
+      axis.title = element_text(size = rel(1.2), face = "plain"),
+      axis.ticks = element_line(color = "#424242", linewidth = 0.4),
+      legend.position = "none"
+    )
+}
+
+demand_curve <- data.frame(Q = seq(7, 15, by = 0.05)) %>%
+  mutate(P = 2.5 - 0.15 * Q)
+supply_curve <- data.frame(Q = seq(7, 15, by = 0.05)) %>%
+  mutate(P = -0.5 + 0.15 * Q)
+eq_Q <- 10
+eq_P <- 1.0
+```
+
+# THEME 2: Modern Minimal
+
+##  {.plain}
+
+\begin{center}
+\Large\textbf{Theme Sampler}
+
+\vskip1em
+
+\normalsize
+This presentation demonstrates the \textbf{Modern Minimal} theme
+
+\vskip0.5em
+
+Clean typography • Lots of white space • Single accent color (teal)
+
+\vskip1em
+
+{\color{structure}Ideal for: contemporary presentations, industry talks}
+\end{center}
+
+## Learning Objectives
+
+By the end of this lecture, you will be able to:
+
+- Define **competitive markets** and the supply-demand model
+- Distinguish between **movements along** curves and **shifts** of curves
+- Identify the five demand shifters and five supply shifters
+- Find market **equilibrium** and analyze shortages and surpluses
+- Predict price and quantity changes from market shocks
+
+## Two-Column Layout Example
+
+:::: {.columns}
+::: {.column width="48%"}
+### Demand Shifters
+
+**TRIBE** mnemonic:
+
+- **T**astes
+- **R**elated goods prices
+- **I**ncome
+- **B**uyers (# of consumers)
+- **E**xpectations
+:::
+
+::: {.column width="48%"}
+### Supply Shifters
+
+**TONER** mnemonic:
+
+- **T**echnology
+- **O**ther goods prices
+- **N**umber of producers
+- **E**xpectations
+- **R**esource costs
+:::
+::::
+
+\vskip1em
+
+::: {.block}
+#### Pro Tip
+If the changing variable is on the Y-axis (price), it's a **movement**. Otherwise, it's a **shift**!
+:::
+
+## Supply and Demand: Market Equilibrium
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5.5
+#| fig-align: center
+
+ggplot() +
+  geom_line(data = supply_curve, aes(x = Q, y = P),
+            color = "#009688", linewidth = 1.8) +
+  geom_line(data = demand_curve, aes(x = Q, y = P),
+            color = "#424242", linewidth = 1.8) +
+  geom_point(aes(x = eq_Q, y = eq_P), size = 6, color = "#009688") +
+  geom_segment(aes(x = eq_Q, y = 0, xend = eq_Q, yend = eq_P),
+               linetype = "dotted", color = "gray50", linewidth = 0.5) +
+  geom_segment(aes(x = 0, y = eq_P, xend = eq_Q, yend = eq_P),
+               linetype = "dotted", color = "gray50", linewidth = 0.5) +
+  annotate("text", x = 13.5, y = 0.9, label = "Demand",
+           color = "#424242", size = 6, hjust = 0) +
+  annotate("text", x = 13.5, y = 1.8, label = "Supply",
+           color = "#009688", size = 6, hjust = 0) +
+  annotate("text", x = eq_Q + 0.3, y = eq_P + 0.15, label = "E",
+           size = 7, fontface = "bold", color = "#009688") +
+  scale_x_continuous(name = "Quantity (billions of units)",
+                     breaks = seq(7, 15, by = 2),
+                     limits = c(7, 15.5),
+                     expand = c(0, 0)) +
+  scale_y_continuous(name = "Price ($ per unit)",
+                     breaks = seq(0.5, 2.5, by = 0.5),
+                     limits = c(0.45, 2.6),
+                     labels = dollar,
+                     expand = c(0, 0)) +
+  theme_econ()
+```
+
+## Knowledge Check
+
+**Question:** If garden gnomes regain popularity, what happens to equilibrium price and quantity?
+
+\vskip1em
+
+a) Price ↑, Quantity ↑
+
+b) Price ↑, Quantity ↓
+
+c) Price ↓, Quantity ↑
+
+d) Price ↓, Quantity ↓
+
+\vskip2em
+
+. . .
+
+::: {.block}
+#### Answer: (a) Price ↑, Quantity ↑
+
+**Reasoning:** Tastes shift demand right → higher willingness to pay at every quantity → new equilibrium at higher price and quantity
+:::
+
+## Summary: Modern Minimal Theme
+
+**Design Features:**
+
+- Clean teal accent color on white background
+- Sans-serif fonts throughout
+- Generous white space and breathing room
+- Minimal decorative elements
+- Subtle underline on frame titles
+
+**Best For:**
+
+- Contemporary business presentations
+- Industry conferences
+- Modern classroom environments
+
+**Graph Style:** Clean with subtle gridlines, teal accent for emphasis

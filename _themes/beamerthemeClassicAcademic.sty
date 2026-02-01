@@ -1,0 +1,86 @@
+% Classic Academic Theme for ECON 1450
+% Traditional serif fonts, navy and burgundy colors, clean layout
+
+\mode<presentation>
+
+% Color palette
+\definecolor{NavyBlue}{RGB}{46,80,144}
+\definecolor{Burgundy}{RGB}{144,30,58}
+\definecolor{Slate}{RGB}{72,72,72}
+\definecolor{LightGray}{RGB}{245,245,245}
+\definecolor{AccentGold}{RGB}{184,134,11}
+
+% Set colors
+\setbeamercolor{structure}{fg=NavyBlue}
+\setbeamercolor{palette primary}{fg=white,bg=NavyBlue}
+\setbeamercolor{palette secondary}{fg=white,bg=Burgundy}
+\setbeamercolor{palette tertiary}{fg=white,bg=Slate}
+\setbeamercolor{title}{fg=NavyBlue}
+\setbeamercolor{subtitle}{fg=Slate}
+\setbeamercolor{author}{fg=Slate}
+\setbeamercolor{date}{fg=Slate}
+\setbeamercolor{frametitle}{fg=NavyBlue,bg=LightGray}
+\setbeamercolor{block title}{fg=white,bg=NavyBlue}
+\setbeamercolor{block body}{fg=black,bg=LightGray}
+\setbeamercolor{itemize item}{fg=Burgundy}
+\setbeamercolor{itemize subitem}{fg=NavyBlue}
+\setbeamercolor{enumerate item}{fg=Burgundy}
+
+% Fonts
+\usefonttheme{serif}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries}
+
+% Inner theme
+\useinnertheme{rectangles}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+% Outer theme
+\useoutertheme{infolines}
+\setbeamertemplate{headline}{
+  \begin{beamercolorbox}[ht=3ex,dp=1ex]{palette primary}
+    \insertnavigation{\paperwidth}
+  \end{beamercolorbox}
+}
+
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[ht=2.5ex,dp=1.5ex,leftskip=1em,rightskip=1em]{palette tertiary}
+    \usebeamerfont{footline}
+    \insertshortauthor \hfill \insertshorttitle \hfill \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}
+}
+
+% Frame title
+\setbeamertemplate{frametitle}{
+  \vskip10pt
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Title page
+\setbeamertemplate{title page}{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+    \vskip0.5em
+    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+    \vskip2em
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+    \vskip1em
+    {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}
+    \vskip1em
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \endgroup
+  \vfill
+}
+
+\mode<all>

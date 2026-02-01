@@ -1,0 +1,94 @@
+% Modern Minimal Theme for ECON 1450
+% Clean sans-serif, lots of white space, single accent color (teal)
+
+\mode<presentation>
+
+% Color palette
+\definecolor{TealPrimary}{RGB}{0,150,136}
+\definecolor{DarkGray}{RGB}{66,66,66}
+\definecolor{LightGray}{RGB}{240,240,240}
+\definecolor{VeryLightGray}{RGB}{250,250,250}
+\definecolor{White}{RGB}{255,255,255}
+
+% Set colors
+\setbeamercolor{structure}{fg=TealPrimary}
+\setbeamercolor{palette primary}{fg=White,bg=TealPrimary}
+\setbeamercolor{palette secondary}{fg=White,bg=DarkGray}
+\setbeamercolor{title}{fg=DarkGray}
+\setbeamercolor{subtitle}{fg=TealPrimary}
+\setbeamercolor{author}{fg=DarkGray}
+\setbeamercolor{date}{fg=DarkGray}
+\setbeamercolor{frametitle}{fg=DarkGray,bg=White}
+\setbeamercolor{block title}{fg=TealPrimary,bg=VeryLightGray}
+\setbeamercolor{block body}{fg=DarkGray,bg=White}
+\setbeamercolor{itemize item}{fg=TealPrimary}
+\setbeamercolor{itemize subitem}{fg=DarkGray}
+\setbeamercolor{enumerate item}{fg=TealPrimary}
+\setbeamercolor{normal text}{fg=DarkGray,bg=White}
+
+% Fonts - sans serif
+\usefonttheme{default}
+\usefonttheme{structurebold}
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\Large}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries}
+
+% Inner theme - minimal
+\useinnertheme{default}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[circle]
+
+% Outer theme - minimal
+\setbeamertemplate{headline}{}
+
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[ht=3ex,dp=1ex,leftskip=2em,rightskip=2em]{palette secondary}
+    \usebeamerfont{footline}
+    \color{White}
+    \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}
+  \vskip0pt
+}
+
+% Frame title with underline
+\setbeamertemplate{frametitle}{
+  \vskip1em
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=2em,rightskip=2em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+  \vskip0.2em
+  {\color{TealPrimary}\rule{0.3\paperwidth}{1pt}}
+  \vskip0.5em
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Title page
+\setbeamertemplate{title page}{
+  \vbox{}
+  \vfill
+  \begingroup
+    \raggedright
+    \leftskip=2em
+    \rightskip=2em
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+    \vskip0.5em
+    {\color{TealPrimary}\rule{0.5\paperwidth}{2pt}}
+    \vskip0.5em
+    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+    \vskip3em
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+    \vskip0.5em
+    {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}
+    \vskip0.5em
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \endgroup
+  \vfill
+}
+
+% Blocks with minimal styling
+\setbeamertemplate{blocks}[default]
+
+\mode<all>

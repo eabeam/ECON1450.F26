@@ -1,0 +1,111 @@
+% Data-First Theme for ECON 1450
+% Optimized for graph readability, high contrast, minimal decoration, neutral + one data accent
+
+\mode<presentation>
+
+% Color palette - designed for data visualization
+\definecolor{DataBlue}{RGB}{31,119,180}
+\definecolor{NeutralGray}{RGB}{90,90,90}
+\definecolor{LightGray}{RGB}{235,235,235}
+\definecolor{DarkGray}{RGB}{64,64,64}
+\definecolor{White}{RGB}{255,255,255}
+\definecolor{GridGray}{RGB}{204,204,204}
+
+% Set colors
+\setbeamercolor{structure}{fg=DataBlue}
+\setbeamercolor{palette primary}{fg=White,bg=DarkGray}
+\setbeamercolor{palette secondary}{fg=White,bg=NeutralGray}
+\setbeamercolor{title}{fg=DarkGray}
+\setbeamercolor{subtitle}{fg=NeutralGray}
+\setbeamercolor{author}{fg=NeutralGray}
+\setbeamercolor{date}{fg=NeutralGray}
+\setbeamercolor{frametitle}{fg=DarkGray,bg=White}
+\setbeamercolor{block title}{fg=DarkGray,bg=LightGray}
+\setbeamercolor{block body}{fg=DarkGray,bg=White}
+\setbeamercolor{itemize item}{fg=DataBlue}
+\setbeamercolor{itemize subitem}{fg=NeutralGray}
+\setbeamercolor{enumerate item}{fg=DataBlue}
+\setbeamercolor{normal text}{fg=DarkGray,bg=White}
+
+% Fonts - clean sans serif, optimized for readability
+\usefonttheme{default}
+\usefonttheme{structurebold}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries}
+
+% Inner theme - minimal, grid-friendly
+\useinnertheme{default}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+% Outer theme - very minimal
+\setbeamertemplate{headline}{}
+
+\setbeamertemplate{footline}{
+  % Thin top line
+  {\color{GridGray}\rule{\paperwidth}{0.5pt}}
+  \vskip2pt
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,leftskip=2em,rightskip=2em]{palette secondary}
+    \usebeamerfont{footline}
+    \color{White}
+    Slide \insertframenumber{} of \inserttotalframenumber
+  \end{beamercolorbox}
+}
+
+% Frame title - clean with subtle separator
+\setbeamertemplate{frametitle}{
+  \vskip1.5em
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=2em,rightskip=2em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+  \vskip0.5em
+  {\color{GridGray}\hspace{2em}\rule{0.2\paperwidth}{0.5pt}}
+  \vskip1em
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Title page - clean and centered
+\setbeamertemplate{title page}{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+    \vskip0.5em
+    {\color{DataBlue}\rule{0.5\paperwidth}{1pt}}
+    \vskip0.5em
+    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+    \vskip3em
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+    \vskip0.5em
+    {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}
+    \vskip0.5em
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \endgroup
+  \vfill
+}
+
+% Simple blocks
+\setbeamertemplate{blocks}[default]
+
+% Remove block separators for cleaner look
+\setbeamertemplate{block begin}{
+  \vskip0.5em
+  \begin{beamercolorbox}[leftskip=1em,rightskip=1em,sep=0.5ex]{block title}
+    \usebeamerfont{block title}\insertblocktitle
+  \end{beamercolorbox}
+  \vskip-0.25ex
+  \begin{beamercolorbox}[leftskip=1em,rightskip=1em,sep=0.5ex,vmode]{block body}
+    \usebeamerfont{block body}
+}
+
+\setbeamertemplate{block end}{
+  \end{beamercolorbox}
+  \vskip0.5em
+}
+
+\mode<all>

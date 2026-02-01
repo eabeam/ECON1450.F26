@@ -1,0 +1,105 @@
+% Bold Visual Theme for ECON 1450
+% Strong geometric shapes, bold colors (coral and teal), eye-catching
+
+\mode<presentation>
+
+% Color palette
+\definecolor{CoralPrimary}{RGB}{255,99,71}
+\definecolor{TealSecondary}{RGB}{0,128,128}
+\definecolor{DeepPurple}{RGB}{75,0,130}
+\definecolor{DarkCharcoal}{RGB}{54,54,54}
+\definecolor{LightBeige}{RGB}{255,250,240}
+\definecolor{BrightYellow}{RGB}{255,215,0}
+
+% Set colors
+\setbeamercolor{structure}{fg=CoralPrimary}
+\setbeamercolor{palette primary}{fg=white,bg=CoralPrimary}
+\setbeamercolor{palette secondary}{fg=white,bg=TealSecondary}
+\setbeamercolor{palette tertiary}{fg=white,bg=DeepPurple}
+\setbeamercolor{title}{fg=CoralPrimary}
+\setbeamercolor{subtitle}{fg=TealSecondary}
+\setbeamercolor{author}{fg=DarkCharcoal}
+\setbeamercolor{date}{fg=DarkCharcoal}
+\setbeamercolor{frametitle}{fg=white,bg=CoralPrimary}
+\setbeamercolor{block title}{fg=white,bg=TealSecondary}
+\setbeamercolor{block body}{fg=DarkCharcoal,bg=LightBeige}
+\setbeamercolor{itemize item}{fg=CoralPrimary}
+\setbeamercolor{itemize subitem}{fg=TealSecondary}
+\setbeamercolor{enumerate item}{fg=CoralPrimary}
+\setbeamercolor{normal text}{fg=DarkCharcoal,bg=white}
+
+% Fonts - sans serif, bold
+\usefonttheme{structurebold}
+\setbeamerfont{title}{size=\Huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\LARGE,series=\bfseries}
+\setbeamerfont{frametitle}{size=\LARGE,series=\bfseries}
+\setbeamerfont{block title}{size=\large,series=\bfseries}
+\setbeamerfont{itemize/enumerate body}{size=\large}
+
+% Inner theme
+\useinnertheme{rectangles}
+\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{enumerate items}[square]
+
+% Outer theme
+\setbeamertemplate{headline}{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=8ex]{palette primary}
+    \vskip3ex
+  \end{beamercolorbox}
+}
+
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=4ex,dp=2ex]{palette tertiary}
+    \hfill
+    \usebeamerfont{footline}
+    \color{white}\insertframenumber/\inserttotalframenumber
+    \hspace{2em}
+  \end{beamercolorbox}
+}
+
+% Frame title with geometric background
+\setbeamertemplate{frametitle}{
+  \vskip-8ex
+  \begin{beamercolorbox}[wd=\paperwidth,ht=8ex,dp=2ex,leftskip=1.5em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+  \vskip0.5em
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Title page with geometric design
+\setbeamertemplate{title page}{
+  % Top geometric bar
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2ex]{palette primary}
+  \end{beamercolorbox}
+
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+    \vskip0.5em
+    % Decorative element
+    {\color{TealSecondary}\rule{0.4\paperwidth}{3pt}}
+    \vskip0.5em
+    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+    \vskip2em
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+    \vskip0.5em
+    {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}
+    \vskip0.5em
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \endgroup
+  \vfill
+
+  % Bottom geometric bar
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2ex]{palette secondary}
+  \end{beamercolorbox}
+}
+
+% Bold blocks
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+\mode<all>

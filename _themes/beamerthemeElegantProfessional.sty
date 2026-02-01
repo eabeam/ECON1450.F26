@@ -1,0 +1,101 @@
+% Elegant Professional Theme for ECON 1450
+% Sophisticated palette (slate blue, warm gray, gold), balanced serif/sans mix
+
+\mode<presentation>
+
+% Color palette
+\definecolor{SlateBlue}{RGB}{106,90,205}
+\definecolor{WarmGray}{RGB}{128,128,118}
+\definecolor{GoldAccent}{RGB}{212,175,55}
+\definecolor{DeepCharcoal}{RGB}{47,47,47}
+\definecolor{IvoryWhite}{RGB}{255,255,240}
+\definecolor{SoftBlue}{RGB}{176,196,222}
+
+% Set colors
+\setbeamercolor{structure}{fg=SlateBlue}
+\setbeamercolor{palette primary}{fg=white,bg=SlateBlue}
+\setbeamercolor{palette secondary}{fg=white,bg=WarmGray}
+\setbeamercolor{palette tertiary}{fg=DeepCharcoal,bg=GoldAccent}
+\setbeamercolor{title}{fg=SlateBlue}
+\setbeamercolor{subtitle}{fg=WarmGray}
+\setbeamercolor{author}{fg=DeepCharcoal}
+\setbeamercolor{date}{fg=WarmGray}
+\setbeamercolor{frametitle}{fg=SlateBlue,bg=IvoryWhite}
+\setbeamercolor{block title}{fg=white,bg=SlateBlue}
+\setbeamercolor{block body}{fg=DeepCharcoal,bg=SoftBlue!20}
+\setbeamercolor{itemize item}{fg=GoldAccent}
+\setbeamercolor{itemize subitem}{fg=SlateBlue}
+\setbeamercolor{enumerate item}{fg=GoldAccent}
+\setbeamercolor{normal text}{fg=DeepCharcoal,bg=IvoryWhite}
+
+% Fonts - serif for math only, sans for text (mixed look)
+\usefonttheme[onlymath]{serif}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries,family=\rmfamily}
+\setbeamerfont{subtitle}{size=\large,family=\sffamily}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries,family=\sffamily}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries,family=\sffamily}
+\setbeamerfont{block body}{family=\rmfamily}
+
+% Inner theme
+\useinnertheme{circles}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[circle]
+
+% Outer theme
+\setbeamertemplate{headline}{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1pt]{palette tertiary}
+  \end{beamercolorbox}
+}
+
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1pt,dp=0pt]{palette tertiary}
+  \end{beamercolorbox}
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=1.5ex,leftskip=1.5em,rightskip=1.5em]{palette secondary}
+    \usebeamerfont{footline}
+    \color{white}
+    \insertshortauthor \hspace{2em} \insertshorttitle \hfill \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}
+}
+
+% Frame title with subtle background
+\setbeamertemplate{frametitle}{
+  \vskip8pt
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.5ex,dp=1.5ex,leftskip=1.5em,rightskip=1em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+  \vskip2pt
+  {\color{GoldAccent}\rule{0.15\paperwidth}{1.5pt}}
+  \vskip8pt
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Title page
+\setbeamertemplate{title page}{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    % Decorative top element
+    {\color{GoldAccent}\rule{0.6\paperwidth}{2pt}}
+    \vskip1em
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+    \vskip0.3em
+    {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+    \vskip1em
+    {\color{GoldAccent}\rule{0.6\paperwidth}{2pt}}
+    \vskip2.5em
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+    \vskip0.8em
+    {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}
+    \vskip0.8em
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \endgroup
+  \vfill
+}
+
+% Elegant blocks
+\setbeamertemplate{blocks}[rounded]
+
+\mode<all>

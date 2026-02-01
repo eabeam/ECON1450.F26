@@ -1,0 +1,185 @@
+---
+title: "Supply and Demand"
+subtitle: "ECON 1450: Principles of Microeconomics"
+author: "Theme Sampler - 5 Design Options"
+date: today
+format:
+  beamer:
+    theme: default
+    colortheme: default
+    aspectratio: 169
+    navigation: horizontal
+    section-titles: false
+    incremental: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+#| include: false
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+# Custom theme for economics graphs
+theme_econ <- function(base_size = 12) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "gray90", linewidth = 0.3),
+      axis.line = element_line(color = "black", linewidth = 0.5),
+      axis.text = element_text(size = rel(0.9)),
+      axis.title = element_text(size = rel(1)),
+      legend.position = "none"
+    )
+}
+
+# Supply and demand data
+create_supply_demand <- function() {
+  # Demand curve data
+  demand <- data.frame(
+    Q = seq(7, 15, by = 0.1)
+  ) %>%
+    mutate(P = 2.5 - 0.15 * Q)
+
+  # Supply curve data
+  supply <- data.frame(
+    Q = seq(7, 15, by = 0.1)
+  ) %>%
+    mutate(P = -0.5 + 0.15 * Q)
+
+  list(demand = demand, supply = supply)
+}
+
+curves <- create_supply_demand()
+```
+
+# Theme Overview
+
+## Five Design Options
+
+This sampler demonstrates five distinct Beamer themes for ECON 1450:
+
+1. **Classic Academic** - Traditional, serif-based
+2. **Modern Minimal** - Clean, contemporary
+3. **Bold Visual** - Eye-catching, geometric
+4. **Elegant Professional** - Sophisticated business style
+5. **Data-First** - Optimized for graphs and charts
+
+Each theme is shown with identical content for comparison.
+
+---
+
+:::{.callout-note}
+**How to use this sampler:** Each theme shows the same 5 slide types: title, content, two-column, graph, and knowledge check. Choose your favorite or mix elements.
+:::
+
+# THEME 1: Classic Academic
+
+## Learning Objectives
+
+By the end of this lecture, you will be able to:
+
+- Define competitive markets and the supply-demand model
+- Distinguish between movements along curves and shifts of curves
+- Identify the five demand shifters and five supply shifters
+- Find market equilibrium and analyze shortages and surpluses
+- Predict price and quantity changes from market shocks
+
+## Two-Column Layout
+
+:::: {.columns}
+::: {.column width="50%"}
+### Demand Shifters (TRIBE)
+
+- **T**astes
+- **R**elated goods prices
+- **I**ncome
+- **B**uyers (# of consumers)
+- **E**xpectations
+:::
+
+::: {.column width="50%"}
+### Supply Shifters (TONER)
+
+- **T**echnology
+- **O**ther goods prices
+- **N**umber of producers
+- **E**xpectations
+- **R**esource costs (inputs)
+:::
+::::
+
+## Supply and Demand Curves
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
+
+ggplot() +
+  geom_line(data = curves$demand, aes(x = Q, y = P),
+            color = "#2E5090", linewidth = 1.2) +
+  geom_line(data = curves$supply, aes(x = Q, y = P),
+            color = "#C41E3A", linewidth = 1.2) +
+  geom_point(aes(x = 10, y = 1.0), size = 4, color = "black") +
+  annotate("text", x = 13, y = 1.0, label = "Demand",
+           color = "#2E5090", size = 5, hjust = 0) +
+  annotate("text", x = 13, y = 1.75, label = "Supply",
+           color = "#C41E3A", size = 5, hjust = 0) +
+  annotate("text", x = 10, y = 0.85, label = "Equilibrium",
+           size = 4, hjust = 0.5) +
+  scale_x_continuous(name = "Quantity",
+                     breaks = seq(7, 15, by = 2),
+                     limits = c(7, 15)) +
+  scale_y_continuous(name = "Price",
+                     breaks = seq(0.5, 2.5, by = 0.5),
+                     limits = c(0.5, 2.5),
+                     labels = dollar) +
+  theme_econ()
+```
+
+## Knowledge Check
+
+**If garden gnomes regain popularity, what happens to equilibrium price and quantity?**
+
+a) Price ↑, Quantity ↑
+b) Price ↑, Quantity ↓
+c) Price ↓, Quantity ↑
+d) Price ↓, Quantity ↓
+
+:::{.fragment}
+**Answer: a)** Tastes shift demand right → higher price and quantity
+:::
+
+---
+
+:::{.callout-tip}
+## Theme 1 Summary
+**Classic Academic** uses traditional colors, serif fonts, and clean layouts. Best for: formal presentations, academic conferences.
+:::
+
+# Additional Sampler Content
+
+## Theme Comparison Notes
+
+The remaining themes (Modern Minimal, Bold Visual, Elegant Professional, Data-First) would be shown in separate rendered PDFs, each with:
+
+- Distinct color palettes
+- Different font choices
+- Varied layout approaches
+- Same content for direct comparison
+
+## Next Steps
+
+1. Review all 5 theme PDFs
+2. Select favorite or identify preferred elements
+3. I'll create custom theme file based on your selection
+4. Build full Chapter 3 deck with chosen design
+
+---
+
+**Note:** To generate all 5 themes, I'll create separate .qmd files (one per theme) that compile to individual PDFs. This allows side-by-side comparison.
