@@ -1,0 +1,504 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Interactive Supply & Demand Shifter</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #009688;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .controls {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .control-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .control-label {
+            width: 100px;
+            font-weight: bold;
+            color: #424242;
+        }
+        .slider-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #009688;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #009688;
+            cursor: pointer;
+        }
+        .slider-value {
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+            color: #009688;
+        }
+        button {
+            background: #009688;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        button:hover {
+            background: #00786d;
+        }
+        button.reset {
+            background: #e57373;
+        }
+        button.reset:hover {
+            background: #d32f2f;
+        }
+        #graph-container {
+            position: relative;
+            margin: 20px 0;
+        }
+        #graph {
+            width: 100%;
+            height: 500px;
+        }
+        .effects-overlay {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #009688;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 280px;
+            max-width: 320px;
+            font-size: 13px;
+            z-index: 1000;
+        }
+        .effects-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #009688;
+            margin-bottom: 8px;
+            text-align: center;
+            border-bottom: 2px solid #009688;
+            padding-bottom: 6px;
+        }
+        .effect-row {
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
+            gap: 8px;
+        }
+        .effect-row.total {
+            border-top: 2px solid #ff9800;
+            margin-top: 6px;
+            padding-top: 8px;
+            background: #fff3e0;
+            margin-left: -12px;
+            margin-right: -12px;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 0 0 6px 6px;
+        }
+        .effect-label {
+            font-weight: bold;
+            color: #424242;
+            min-width: 70px;
+            font-size: 12px;
+        }
+        .effect-arrow {
+            font-size: 18px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .effect-description {
+            color: #666;
+            flex: 1;
+            font-size: 12px;
+        }
+        .total-effect {
+            font-size: 15px;
+            color: #d84315;
+            font-weight: bold;
+            flex: 1;
+        }
+        .helper-text {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Supply & Demand Shifter</h1>
+        <p class="subtitle">Adjust sliders to shift curves and see the effects on price and quantity</p>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-label">Supply:</div>
+                <div class="slider-container">
+                    <button onclick="changeSupply(-1)">← Decrease</button>
+                    <input type="range" id="supplySlider" min="-3" max="3" value="0" step="1" oninput="updateGraph()">
+                    <button onclick="changeSupply(1)">Increase →</button>
+                    <div class="slider-value" id="supplyValue">0</div>
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label">Demand:</div>
+                <div class="slider-container">
+                    <button onclick="changeDemand(-1)">← Decrease</button>
+                    <input type="range" id="demandSlider" min="-3" max="3" value="0" step="1" oninput="updateGraph()">
+                    <button onclick="changeDemand(1)">Increase →</button>
+                    <div class="slider-value" id="demandValue">0</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="reset" onclick="reset()">Reset to Original</button>
+            </div>
+        </div>
+
+        <div id="graph-container">
+            <div id="graph"></div>
+
+            <div class="effects-overlay">
+                <div class="effects-title">Market Effects</div>
+
+                <div class="effect-row">
+                    <div class="effect-label">Demand:</div>
+                    <div class="effect-arrow" id="demandArrow">—</div>
+                    <div class="effect-description" id="demandEffect">—</div>
+                </div>
+
+                <div class="effect-row">
+                    <div class="effect-label">Supply:</div>
+                    <div class="effect-arrow" id="supplyArrow">—</div>
+                    <div class="effect-description" id="supplyEffect">—</div>
+                </div>
+
+                <div class="effect-row total">
+                    <div class="effect-label">TOTAL:</div>
+                    <div class="total-effect" id="totalEffect">No change</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="helper-text">
+            Tip: Try large demand increase + small supply increase to see price rise.
+            Try large supply increase + small demand increase to see price fall.
+        </p>
+    </div>
+
+    <script>
+        // Market parameters
+        const baseSupplyIntercept = -0.5;
+        const baseDemandIntercept = 2.5;
+        const supplySlope = 0.15;
+        const demandSlope = -0.15;
+        const shiftSize = 0.25; // How much each step shifts
+
+        let currentSupplyShift = 0;
+        let currentDemandShift = 0;
+
+        // Helper functions
+        function createSupplyCurve(shift) {
+            const Q = [];
+            const P = [];
+            // Supply increase = rightward shift = LOWER intercept
+            const intercept = baseSupplyIntercept - shift * shiftSize;
+            for (let q = 5; q <= 18; q += 0.1) {
+                Q.push(q);
+                P.push(intercept + supplySlope * q);
+            }
+            return { Q, P };
+        }
+
+        function createDemandCurve(shift) {
+            const Q = [];
+            const P = [];
+            const intercept = baseDemandIntercept + shift * shiftSize;
+            for (let q = 5; q <= 18; q += 0.1) {
+                Q.push(q);
+                P.push(intercept + demandSlope * q);
+            }
+            return { Q, P };
+        }
+
+        function findEquilibrium(demandShift, supplyShift) {
+            const dIntercept = baseDemandIntercept + demandShift * shiftSize;
+            const sIntercept = baseSupplyIntercept - supplyShift * shiftSize; // Supply: subtract
+            const Q = (sIntercept - dIntercept) / (demandSlope - supplySlope);
+            const P = dIntercept + demandSlope * Q;
+            return { Q, P };
+        }
+
+        function changeSupply(delta) {
+            const slider = document.getElementById("supplySlider");
+            slider.value = parseInt(slider.value) + delta;
+            updateGraph();
+        }
+
+        function changeDemand(delta) {
+            const slider = document.getElementById("demandSlider");
+            slider.value = parseInt(slider.value) + delta;
+            updateGraph();
+        }
+
+        function reset() {
+            document.getElementById("supplySlider").value = 0;
+            document.getElementById("demandSlider").value = 0;
+            updateGraph();
+        }
+
+        function updateGraph() {
+            currentSupplyShift = parseInt(document.getElementById("supplySlider").value);
+            currentDemandShift = parseInt(document.getElementById("demandSlider").value);
+
+            document.getElementById("supplyValue").textContent = currentSupplyShift;
+            document.getElementById("demandValue").textContent = currentDemandShift;
+
+            // Create curves
+            const supply0 = createSupplyCurve(0);
+            const demand0 = createDemandCurve(0);
+            const supply1 = createSupplyCurve(currentSupplyShift);
+            const demand1 = createDemandCurve(currentDemandShift);
+
+            const eq0 = findEquilibrium(0, 0);
+            const eq1 = findEquilibrium(currentDemandShift, currentSupplyShift);
+
+            // Build traces
+            const traces = [
+                {
+                    x: supply0.Q,
+                    y: supply0.P,
+                    name: "S₀ (original)",
+                    line: { color: "#009688", dash: "dash", width: 2 },
+                    mode: "lines",
+                    hoverinfo: "skip"
+                },
+                {
+                    x: demand0.Q,
+                    y: demand0.P,
+                    name: "D₀ (original)",
+                    line: { color: "#424242", dash: "dash", width: 2 },
+                    mode: "lines",
+                    hoverinfo: "skip"
+                }
+            ];
+
+            // Add new curves if shifted
+            if (currentSupplyShift !== 0) {
+                traces.push({
+                    x: supply1.Q,
+                    y: supply1.P,
+                    name: "S₁ (new)",
+                    line: { color: "#009688", width: 3 },
+                    mode: "lines",
+                    hoverinfo: "skip"
+                });
+            }
+
+            if (currentDemandShift !== 0) {
+                traces.push({
+                    x: demand1.Q,
+                    y: demand1.P,
+                    name: "D₁ (new)",
+                    line: { color: "#424242", width: 3 },
+                    mode: "lines",
+                    hoverinfo: "skip"
+                });
+            }
+
+            // Add equilibrium points
+            traces.push({
+                x: [eq0.Q],
+                y: [eq0.P],
+                name: "E₀",
+                mode: "markers+text",
+                marker: { size: 12, color: "#999" },
+                text: [`E₀<br>(${eq0.Q.toFixed(1)}, $${eq0.P.toFixed(2)})`],
+                textposition: "bottom left",
+                textfont: { size: 12, color: "#666" }
+            });
+
+            if (currentSupplyShift !== 0 || currentDemandShift !== 0) {
+                traces.push({
+                    x: [eq1.Q],
+                    y: [eq1.P],
+                    name: "E₁",
+                    mode: "markers+text",
+                    marker: { size: 14, color: "#d84315" },
+                    text: [`E₁<br>(${eq1.Q.toFixed(1)}, $${eq1.P.toFixed(2)})`],
+                    textposition: "top right",
+                    textfont: { size: 14, color: "#d84315", weight: "bold" }
+                });
+            }
+
+            const layout = {
+                title: {
+                    text: "<b>Supply and Demand Market</b>",
+                    font: { size: 18 }
+                },
+                xaxis: {
+                    title: "Quantity",
+                    range: [5, 18],
+                    showgrid: true,
+                    gridcolor: "#f0f0f0"
+                },
+                yaxis: {
+                    title: "Price",
+                    range: [0, 3.5],
+                    showgrid: true,
+                    gridcolor: "#f0f0f0",
+                    tickprefix: "$"
+                },
+                showlegend: true,
+                legend: { x: 0.02, y: 0.98 },
+                plot_bgcolor: "white",
+                paper_bgcolor: "white",
+                hovermode: "closest"
+            };
+
+            Plotly.newPlot("graph", traces, layout, { responsive: true });
+
+            // Update effects panel
+            updateEffects(eq0, eq1);
+        }
+
+        function updateEffects(eq0, eq1) {
+            const deltaP = eq1.P - eq0.P;
+            const deltaQ = eq1.Q - eq0.Q;
+
+            // Demand effects
+            let demandPEffect = "";
+            let demandQEffect = "";
+            if (currentDemandShift > 0) {
+                demandPEffect = "P↑";
+                demandQEffect = "Q↑";
+                document.getElementById("demandArrow").innerHTML = "↑";
+                document.getElementById("demandArrow").style.color = "#009688";
+                document.getElementById("demandEffect").innerHTML = demandPEffect + " " + demandQEffect;
+            } else if (currentDemandShift < 0) {
+                demandPEffect = "P↓";
+                demandQEffect = "Q↓";
+                document.getElementById("demandArrow").innerHTML = "↓";
+                document.getElementById("demandArrow").style.color = "#d32f2f";
+                document.getElementById("demandEffect").innerHTML = demandPEffect + " " + demandQEffect;
+            } else {
+                document.getElementById("demandArrow").innerHTML = "—";
+                document.getElementById("demandArrow").style.color = "#999";
+                document.getElementById("demandEffect").innerHTML = "—";
+            }
+
+            // Supply effects
+            let supplyPEffect = "";
+            let supplyQEffect = "";
+            if (currentSupplyShift > 0) {
+                supplyPEffect = "P↓";
+                supplyQEffect = "Q↑";
+                document.getElementById("supplyArrow").innerHTML = "↑";
+                document.getElementById("supplyArrow").style.color = "#009688";
+                document.getElementById("supplyEffect").innerHTML = supplyPEffect + " " + supplyQEffect;
+            } else if (currentSupplyShift < 0) {
+                supplyPEffect = "P↑";
+                supplyQEffect = "Q↓";
+                document.getElementById("supplyArrow").innerHTML = "↓";
+                document.getElementById("supplyArrow").style.color = "#d32f2f";
+                document.getElementById("supplyEffect").innerHTML = supplyPEffect + " " + supplyQEffect;
+            } else {
+                document.getElementById("supplyArrow").innerHTML = "—";
+                document.getElementById("supplyArrow").style.color = "#999";
+                document.getElementById("supplyEffect").innerHTML = "—";
+            }
+
+            // Total effect
+            let totalEffect = "";
+
+            // Price effect
+            if (Math.abs(deltaP) < 0.01) {
+                totalEffect = "P— Q—";
+            } else {
+                const pMagnitude = Math.abs(deltaP) > 0.3 ? "↑↑" : "↑";
+                totalEffect = deltaP > 0 ? "P" + pMagnitude : "P" + (Math.abs(deltaP) > 0.3 ? "↓↓" : "↓");
+
+                // Quantity effect
+                if (Math.abs(deltaQ) >= 0.01) {
+                    const qMagnitude = Math.abs(deltaQ) > 1.5 ? "↑↑" : "↑";
+                    totalEffect += " " + (deltaQ > 0 ? "Q" + qMagnitude : "Q" + (Math.abs(deltaQ) > 1.5 ? "↓↓" : "↓"));
+                } else {
+                    totalEffect += " Q—";
+                }
+
+                // Add uncertainty markers
+                if (currentDemandShift !== 0 && currentSupplyShift !== 0) {
+                    const demandPushesP = currentDemandShift > 0 ? 1 : -1;
+                    const supplyPushesP = currentSupplyShift > 0 ? -1 : 1;
+                    const demandPushesQ = currentDemandShift > 0 ? 1 : -1;
+                    const supplyPushesQ = currentSupplyShift > 0 ? 1 : -1;
+
+                    if (demandPushesP !== supplyPushesP && Math.abs(deltaP) < 0.15) {
+                        totalEffect = totalEffect.replace(/P[↑↓]+/, "P?");
+                    }
+                    if (demandPushesQ !== supplyPushesQ && Math.abs(deltaQ) < 0.5) {
+                        totalEffect = totalEffect.replace(/Q[↑↓]+/, "Q?");
+                    }
+                }
+            }
+
+            document.getElementById("totalEffect").innerHTML = totalEffect;
+        }
+
+        // Initialize
+        updateGraph();
+    </script>
+</body>
+</html>
+

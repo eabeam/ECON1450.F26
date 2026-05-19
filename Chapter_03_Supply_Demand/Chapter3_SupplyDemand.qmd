@@ -1,0 +1,1431 @@
+---
+title: "Supply and Demand"
+subtitle: "Chapter 3"
+author: "ECON 1450: Principles of Microeconomics"
+date: "Fall 2026"
+institute: "University of Vermont"
+format:
+  beamer:
+    theme: Madrid
+    colortheme: default
+    fonttheme: structurebold
+    aspectratio: 169
+    navigation: horizontal
+    section-titles: false
+    toc: false
+    slide-level: 2
+    incremental: false
+    cite-method: natbib
+header-includes: |
+  \usepackage{tikz}
+  \usetikzlibrary{shapes,arrows,positioning}
+  \definecolor{TealPrimary}{RGB}{0,150,136}
+  \definecolor{DarkGray}{RGB}{66,66,66}
+  \definecolor{LightGray}{RGB}{240,240,240}
+  \setbeamercolor{structure}{fg=TealPrimary}
+  \setbeamercolor{palette primary}{fg=white,bg=TealPrimary}
+  \setbeamercolor{frametitle}{fg=DarkGray,bg=white}
+  \setbeamercolor{block title}{fg=TealPrimary,bg=LightGray!50}
+  \setbeamercolor{itemize item}{fg=TealPrimary}
+  \setbeamerfont{title}{size=\huge,series=\bfseries}
+  \setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{footline}[frame number]
+execute:
+  echo: false
+  warning: false
+  message: false
+  cache: false
+---
+
+```{r setup}
+#| include: false
+
+# Load packages
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(grid)
+library(gridExtra)
+
+# Set global theme for all graphs
+theme_modern_econ <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.1), color = "#424242"),
+      plot.subtitle = element_text(hjust = 0.5, size = rel(0.9), color = "#5A5A5A"),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "#F0F0F0", linewidth = 0.3),
+      axis.line = element_line(color = "#424242", linewidth = 0.6),
+      axis.text = element_text(size = rel(0.95), color = "#424242"),
+      axis.title = element_text(size = rel(1), face = "plain", color = "#424242"),
+      axis.ticks = element_line(color = "#424242", linewidth = 0.4),
+      axis.ticks.length = unit(0.15, "cm"),
+      legend.position = "none",
+      plot.margin = margin(10, 10, 10, 10)
+    )
+}
+
+# Color palette
+col_demand <- "#424242"  # Dark gray
+col_supply <- "#009688"  # Teal
+col_equilibrium <- "#009688"
+col_shift <- "#00BCD4"  # Light teal
+
+# Helper function to create supply curves
+create_supply <- function(intercept = -0.5, slope = 0.15, Q_range = c(7, 15)) {
+  data.frame(Q = seq(Q_range[1], Q_range[2], by = 0.05)) %>%
+    mutate(P = intercept + slope * Q)
+}
+
+# Helper function to create demand curves
+create_demand <- function(intercept = 2.5, slope = -0.15, Q_range = c(7, 15)) {
+  data.frame(Q = seq(Q_range[1], Q_range[2], by = 0.05)) %>%
+    mutate(P = intercept + slope * Q)
+}
+
+# Standard supply and demand curves
+demand_std <- create_demand()
+supply_std <- create_supply()
+
+# Equilibrium
+eq_Q <- 10
+eq_P <- 1.0
+```
+
+#
+
+\begin{center}
+{\Huge\textbf{Supply and Demand}}
+
+\vskip0.5em
+
+{\Large Chapter 3}
+
+\vskip2em
+
+{\large ECON 1450: Principles of Microeconomics}
+
+{\normalsize University of Vermont • Fall 2026}
+\end{center}
+
+# Opening: A Market in Action
+
+## How much for a hotel room in Burlington on April 7, 2024?
+
+::: {.columns}
+:::: {.column width="58%"}
+**Typical spring weekend:**
+- Comfort Inn: \$120
+- Hilton Garden Inn: \$150
+
+\vskip1em
+
+**Eclipse weekend (April 7-8, 2024):**
+- Comfort Inn: \$475
+- Hilton Garden Inn: \$860
+- Many hotels: fully booked
+
+\vskip1em
+
+::: {.block}
+### What changed?
+Same hotels, same rooms, same city... dramatically different prices. **Supply and demand in action.**
+:::
+::::
+
+:::: {.column width="40%"}
+\begin{center}
+\includegraphics[width=\linewidth,height=0.7\textheight,keepaspectratio]{images/eclipse_hotel.jpg}
+
+{\small \textit{Image: Burlington during 2024 total solar eclipse}}
+\end{center}
+::::
+:::
+
+## By October 2023, the picture was clear
+
+Accommodation listings across Vermont were being booked months in advance:
+
+- La Quinta Inn \& Suites: \$624/night
+- Best Western Plus: \$475/night
+- Hilton Garden Inn: \$860/night
+- VRBO and Airbnb: elevated pricing throughout the region
+
+\vskip1em
+
+::: {.block}
+#### Market Response
+Hotels didn't build new rooms. They didn't change amenities. They simply adjusted the price to match the surge in demand from eclipse viewers.
+:::
+
+# Course Roadmap
+
+## Today's Journey
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+  \node[rectangle, draw=TealPrimary, thick, fill=TealPrimary!10, text width=3cm, align=center, minimum height=1cm] (curves) {Supply and Demand Curves};
+  \node[rectangle, draw=TealPrimary, thick, fill=TealPrimary!10, text width=3cm, align=center, minimum height=1cm, below of=curves] (shifts) {Shifts vs. Movements};
+  \node[rectangle, draw=TealPrimary, thick, fill=TealPrimary!10, text width=3cm, align=center, minimum height=1cm, below of=shifts] (eq) {Equilibrium};
+  \node[rectangle, draw=TealPrimary, thick, fill=TealPrimary!10, text width=3cm, align=center, minimum height=1cm, below of=eq] (apply) {Real-World Applications};
+
+  \draw[->, thick, TealPrimary] (curves) -- (shifts);
+  \draw[->, thick, TealPrimary] (shifts) -- (eq);
+  \draw[->, thick, TealPrimary] (eq) -- (apply);
+\end{tikzpicture}
+\end{center}
+
+## Learning Objectives
+
+By the end of today's class, you will be able to:
+
+1. **Define** competitive markets and explain how supply and demand describe them
+
+2. **Distinguish** between movements along curves versus shifts of curves
+
+3. **Identify** the five factors that shift demand and five that shift supply
+
+4. **Find** market equilibrium and explain how prices eliminate shortages and surpluses
+
+5. **Predict** how price and quantity change when markets experience shocks
+
+\vskip1em
+
+::: {.block}
+#### Core Skill
+The supply-demand framework is economics' most powerful analytical tool. Master it, and you can explain everything from hotel prices to labor markets to cryptocurrency.
+:::
+
+# Part I: The Demand Side
+
+## Competitive Markets: Our Starting Point
+
+For now, we analyze **competitive markets**:
+
+:::: {.columns}
+::: {.column width="48%"}
+**Characteristics:**
+
+- Many buyers and sellers
+- No single participant can influence market price
+- Standardized products
+- Free entry and exit
+:::
+
+::: {.column width="48%"}
+**Examples:**
+
+- Agricultural commodities (wheat, corn)
+- Stock markets
+- Online marketplaces
+- Gasoline stations in a city
+:::
+::::
+
+\vskip1em
+
+::: {.block}
+#### Why start here?
+Not all markets are competitive (we'll study monopolies and oligopolies later), but competitive markets provide the clearest insights into how prices coordinate economic activity.
+:::
+
+## The Demand Curve
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+# Points ON the demand curve (matching demand_std equation: P = 2.5 - 0.15*Q)
+demand_schedule <- data.frame(
+  Quantity = c(7, 8, 9, 10, 11, 12, 13),
+  Price = c(2.5 - 0.15*7, 2.5 - 0.15*8, 2.5 - 0.15*9, 2.5 - 0.15*10,
+            2.5 - 0.15*11, 2.5 - 0.15*12, 2.5 - 0.15*13)
+)
+
+ggplot() +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.5) +
+  geom_point(data = demand_schedule, aes(x = Quantity, y = Price),
+             color = col_demand, size = 3) +
+  annotate("text", x = 12.5, y = 0.75, label = "Demand",
+           color = col_demand, size = 5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 9.5, y = 1.65,
+           label = "As price falls,\nquantity rises",
+           color = col_demand, size = 3.2, hjust = 0.5) +
+  annotate("segment", x = 9.8, y = 1.45, xend = 10.2, yend = 1.15,
+           arrow = arrow(length = unit(0.2, "cm")), color = col_demand, linewidth = 0.7) +
+  scale_x_continuous(name = "Quantity (billions of pounds)",
+                     breaks = seq(7, 15, by = 2),
+                     limits = c(6.8, 15.2),
+                     expand = expansion(mult = 0.02)) +
+  scale_y_continuous(name = "Price ($/lb)",
+                     breaks = seq(0.5, 2.0, by = 0.5),
+                     limits = c(0.45, 2.05),
+                     labels = dollar,
+                     expand = expansion(mult = 0.02)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+#### Law of Demand
+Higher prices → lower quantity demanded. The demand curve slopes downward.
+:::
+
+## Critical Distinction: Movement vs. Shift
+
+```{r}
+#| fig-width: 11
+#| fig-height: 4.2
+#| fig-align: center
+
+# Create shifted demand
+demand_shift <- create_demand(intercept = 3.0)
+
+# Movement plot - arrow follows actual demand curve slope
+p1 <- ggplot() +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.4) +
+  geom_point(aes(x = 10, y = 1.0), size = 4, color = col_demand) +
+  geom_point(aes(x = 13, y = 0.55), size = 4, color = col_demand) +
+  # Arrow follows demand curve slope: P = 2.5 - 0.15*Q
+  geom_segment(aes(x = 10.3, y = 0.955, xend = 12.7, yend = 0.595),
+               arrow = arrow(length = unit(0.25, "cm")),
+               color = "#E57373", linewidth = 1.2) +
+  annotate("text", x = 12.5, y = 1.55, label = "D",
+           color = col_demand, size = 5, fontface = "bold") +
+  scale_x_continuous(name = "Quantity",
+                     limits = c(7, 15), expand = expansion(mult = 0.02)) +
+  scale_y_continuous(name = "Price",
+                     limits = c(0.4, 1.8), labels = dollar, expand = expansion(mult = 0.02)) +
+  ggtitle("Movement Along Curve") +
+  theme_modern_econ() +
+  theme(plot.title = element_text(size = 11))
+
+# Shift plot - arrow stays within curves
+p2 <- ggplot() +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.2, alpha = 0.4) +
+  geom_line(data = demand_shift, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.4) +
+  # Shorter arrow that doesn't overshoot
+  geom_segment(aes(x = 10.5, y = 1.0, xend = 12.5, yend = 1.0),
+               arrow = arrow(length = unit(0.25, "cm")),
+               color = col_supply, linewidth = 1.2) +
+  # Lower D1 and D2 labels
+  annotate("text", x = 13, y = 0.85, label = expression(D[1]),
+           color = col_demand, size = 5, fontface = "bold", alpha = 0.5) +
+  annotate("text", x = 13, y = 1.35, label = expression(D[2]),
+           color = col_demand, size = 5, fontface = "bold") +
+  scale_x_continuous(name = "Quantity",
+                     limits = c(7, 15), expand = expansion(mult = 0.02)) +
+  scale_y_continuous(name = "",
+                     limits = c(0.4, 1.8), labels = dollar, expand = expansion(mult = 0.02)) +
+  ggtitle("Entire Curve Shifts") +
+  theme_modern_econ() +
+  theme(plot.title = element_text(size = 11),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank())
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+\vskip-1em
+
+::: {.block}
+**Pro Tip:** If the changing variable is on the Y-axis (price), it's a **movement**. Otherwise, it's a **shift**!
+:::
+
+## Common Mistakes: Movement vs. Shift
+
+Students often confuse these concepts. Here's how to avoid errors:
+
+\vskip1em
+
+**❌ WRONG:** "Price increased, so demand shifted"
+- **✓ CORRECT:** "Price increased, so quantity demanded decreased" (movement along curve)
+
+\vskip0.5em
+
+**❌ WRONG:** "Income rose, so quantity demanded increased"
+- **✓ CORRECT:** "Income rose, so demand increased" (entire curve shifts)
+
+\vskip1em
+
+::: {.block}
+#### Quick Test
+Ask yourself: "Did **price** change, or did **something else** change?"
+- Price changed → **movement** along the curve
+- Something else changed → **shift** of the entire curve
+:::
+
+## What Shifts Demand? The TRIBE Framework
+
+::: {.columns}
+:::: {.column width="48%"}
+### Five Demand Shifters
+
+**T** - Tastes and preferences
+
+**R** - Related goods prices
+
+**I** - Income
+
+**B** - Buyers (number of consumers)
+
+**E** - Expectations
+::::
+
+:::: {.column width="48%"}
+### Remember:
+
+\vskip1em
+
+These factors shift the **entire curve**
+
+\vskip1em
+
+Price changes cause **movements along** the curve
+
+\vskip1em
+
+Direction matters: increase vs. decrease in demand
+::::
+:::
+
+## Demand Shifter 1: Related Goods
+
+:::: {.columns}
+::: {.column width="58%"}
+**Substitutes** - Goods that can replace each other
+
+\vskip0.5em
+
+- ↑ Price of Hawaii trips → ↑ Demand for Puerto Rico trips
+- ↑ Price of beef → ↑ Demand for chicken
+- ↑ Price of iPhone → ↑ Demand for Android phones
+
+\vskip0.5em
+
+::: {.block}
+Price of substitute ↑ → Demand ↑
+:::
+
+\vskip1em
+
+**Complements** - Goods consumed together
+
+\vskip0.5em
+
+- ↑ Price of cars → ↓ Demand for gasoline
+- ↑ Price of printers → ↓ Demand for ink cartridges
+- ↑ Price of hot dogs → ↓ Demand for hot dog buns
+
+\vskip0.5em
+
+::: {.block}
+Price of complement ↑ → Demand ↓
+:::
+:::
+
+::: {.column width="40%"}
+\begin{center}
+\includegraphics[width=\linewidth,height=0.6\textheight,keepaspectratio]{images/smartphone_substitutes.jpg}
+
+{\small \textit{Substitutes: iPhone vs Android}}
+\end{center}
+:::
+::::
+
+## Knowledge Check: Substitutes and Complements
+
+**A new tax raises the price of gasoline. What happens to the demand for electric vehicles?**
+
+\vskip0.5em
+
+a) Demand for electric vehicles increases
+
+b) Demand for electric vehicles decreases
+
+c) Quantity demanded of electric vehicles increases
+
+d) No change in demand for electric vehicles
+
+\vskip2em
+
+\onslide<2->{
+::: {.block}
+**Answer:** (a)
+Gasoline and electric vehicles are substitutes. When the price of gasoline rises, consumers shift toward the substitute → demand for EVs increases (curve shifts right).
+:::
+}
+
+## Demand Shifter 2: Income
+
+:::: {.columns}
+::: {.column width="50%"}
+**Normal Goods**
+
+Income ↑ → Demand ↑
+
+\vskip0.5em
+
+Examples:
+- Restaurant meals
+- New cars
+- International travel
+- Organic produce
+
+\vskip1em
+
+Most goods are normal goods
+:::
+
+::: {.column width="50%"}
+**Inferior Goods**
+
+Income ↑ → Demand ↓
+
+\vskip0.5em
+
+Examples:
+- Instant ramen
+- Used cars (vs. new)
+- Generic brands
+- Bus rides (vs. owning a car)
+
+\vskip1em
+
+Budget substitutes we trade up from
+:::
+::::
+
+## Knowledge Check: Inferior Goods
+
+**Which are most likely to be inferior goods?**
+
+\vskip0.5em
+
+a) Store-brand cereal
+
+b) Designer boots
+
+c) Premium deodorant
+
+d) Public bus rides
+
+\vskip2em
+
+\onslide<2->{
+::: {.block}
+**Answer:** (a) and (d)
+
+Store-brand cereal and bus rides are budget options that people typically replace with premium alternatives (name-brand cereal, personal vehicles) as income rises.
+:::
+}
+
+## Demand Shifter 3: Tastes and Preferences
+
+Consumer preferences change for many reasons:
+
+\vskip0.5em
+
+**Seasonal patterns**
+- Winter → ↑ demand for coats, snow tires
+- Summer → ↑ demand for air conditioners, beach gear
+
+\vskip0.5em
+
+**Trends and fads**
+- Stanley cups, fidget spinners, Pokémon cards
+- These create temporary demand spikes
+
+\vskip0.5em
+
+**New information**
+- Health studies linking smoking to cancer → ↓ demand for cigarettes
+- Celebrity endorsements → ↑ demand for products
+
+## Demand Shifters 4-5: Expectations and Buyers
+
+**4. Expectations**
+- Expect higher future prices → ↑ demand today (buy now!)
+- Expect lower future prices → ↓ demand today (wait for sale)
+- Expect higher future income → ↑ demand today
+
+\vskip1em
+
+**5. Number of Buyers**
+- More consumers → ↑ demand
+- Population growth, new markets opening
+- Example: More babies → ↑ demand for diapers
+
+# Part II: The Supply Side
+
+## The Supply Curve
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+# Create supply schedule
+supply_schedule <- data.frame(
+  Price = c(2.00, 1.75, 1.50, 1.25, 1.00, 0.75, 0.50),
+  Quantity = c(11.6, 11.5, 11.2, 10.7, 10.0, 9.1, 8.0)
+)
+
+ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.5) +
+  geom_point(data = supply_schedule, aes(x = Quantity, y = Price),
+             color = col_supply, size = 3) +
+  annotate("text", x = 13, y = 1.85, label = "Supply",
+           color = col_supply, size = 5.5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 8.5, y = 1.65,
+           label = "As price rises,\nquantity supplied rises",
+           color = col_supply, size = 3.5, hjust = 0.5) +
+  annotate("segment", x = 9, y = 1.45, xend = 9.5, yend = 1.1,
+           arrow = arrow(length = unit(0.25, "cm")), color = col_supply, linewidth = 0.8) +
+  scale_x_continuous(name = "Quantity of cotton (billions of pounds)",
+                     breaks = seq(7, 15, by = 2),
+                     limits = c(7, 15.5),
+                     expand = c(0, 0)) +
+  scale_y_continuous(name = "Price of cotton (per pound)",
+                     breaks = seq(0.5, 2.0, by = 0.25),
+                     limits = c(0.45, 2.1),
+                     labels = dollar,
+                     expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+#### Law of Supply
+Higher prices → higher quantity supplied. The supply curve slopes upward.
+:::
+
+## Movement vs. Shift: Supply Edition
+
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+#| fig-align: center
+
+# Shifted supply
+supply_shift <- create_supply(intercept = 0.0)
+
+# Movement
+p3 <- ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.3) +
+  geom_point(aes(x = 9, y = 0.85), size = 4, color = col_supply) +
+  geom_point(aes(x = 11, y = 1.15), size = 4, color = col_supply) +
+  geom_segment(aes(x = 9, y = 0.85, xend = 11, yend = 1.15),
+               arrow = arrow(length = unit(0.3, "cm")),
+               color = "#E57373", linewidth = 1.2) +
+  annotate("text", x = 12.5, y = 1.45, label = "S",
+           color = col_supply, size = 5.5, fontface = "bold") +
+  annotate("text", x = 10, y = 0.65,
+           label = "Movement\nalong curve",
+           color = "#E57373", size = 3, hjust = 0.5, fontface = "bold") +
+  scale_x_continuous(name = "Quantity",
+                     limits = c(7, 15), expand = c(0, 0)) +
+  scale_y_continuous(name = "Price",
+                     limits = c(0.4, 2.1), labels = dollar, expand = c(0, 0)) +
+  ggtitle("Change in Quantity Supplied") +
+  theme_modern_econ() +
+  theme(plot.title = element_text(size = rel(1)))
+
+# Shift
+p4 <- ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.3, alpha = 0.4) +
+  geom_line(data = supply_shift, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.3) +
+  geom_segment(aes(x = 10, y = 1.0, xend = 13, yend = 1.0),
+               arrow = arrow(length = unit(0.3, "cm")),
+               color = col_shift, linewidth = 1.2) +
+  annotate("text", x = 12.5, y = 1.45, label = expression(S[1]),
+           color = col_supply, size = 5.5, fontface = "bold", alpha = 0.4) +
+  annotate("text", x = 12.5, y = 1.9, label = expression(S[2]),
+           color = col_supply, size = 5.5, fontface = "bold") +
+  annotate("text", x = 11.5, y = 0.8,
+           label = "Shift of\nentire curve",
+           color = col_shift, size = 3, hjust = 0.5, fontface = "bold") +
+  scale_x_continuous(name = "Quantity",
+                     limits = c(7, 15), expand = c(0, 0)) +
+  scale_y_continuous(name = "",
+                     limits = c(0.4, 2.1), labels = dollar, expand = c(0, 0)) +
+  ggtitle("Change in Supply") +
+  theme_modern_econ() +
+  theme(plot.title = element_text(size = rel(1)),
+        axis.title.y = element_blank())
+
+grid.arrange(p3, p4, ncol = 2)
+```
+
+## What Shifts Supply? The TONER Framework
+
+::: {.columns}
+:::: {.column width="48%"}
+### Five Supply Shifters
+
+**T** - Technology
+
+**O** - Other goods prices
+
+**N** - Number of producers
+
+**E** - Expectations
+
+**R** - Resource costs (inputs)
+::::
+
+:::: {.column width="48%"}
+### Key Insight:
+
+\vskip1em
+
+Supply shifts when producers' **costs** or **profit opportunities** change
+
+\vskip1em
+
+Better technology, more producers, or lower input costs → ↑ supply
+
+\vskip1em
+
+Higher input costs or fewer producers → ↓ supply
+::::
+:::
+
+## Supply Shifter 1: Input Prices
+
+:::: {.columns}
+::: {.column width="58%"}
+**↓ Input Price → ↑ Supply**
+
+Lower production costs mean producers can profitably supply more at each price
+
+\vskip0.5em
+
+Examples:
+
+- ↓ Fertilizer prices → ↑ Cotton supply
+- ↓ Steel prices → ↑ Car supply
+- ↓ Microchip prices → ↑ Laptop supply
+
+\vskip1em
+
+**↑ Input Price → ↓ Supply**
+
+Higher production costs reduce profitable supply at each price
+
+\vskip0.5em
+
+Examples:
+
+- ↑ Labor costs → ↓ Restaurant supply
+- ↑ Fuel costs → ↓ Trucking supply
+- ↑ Coffee bean costs → ↓ Latte supply
+:::
+
+::: {.column width="40%"}
+\begin{center}
+\includegraphics[width=\linewidth,height=0.6\textheight,keepaspectratio]{images/factory_production.jpg}
+
+{\small \textit{Input costs affect production}}
+\end{center}
+:::
+::::
+
+## Supply Shifter 2: Related Goods in Production
+
+Producers often can make multiple products (substitutes) or must make them together (complements)
+
+\vskip1em
+
+**Substitutes in Production**
+
+- Farmer's land: corn vs. soybeans
+- ↑ Price of soybeans → farmer plants more soybeans → ↓ corn supply
+
+\vskip1em
+
+**Complements in Production**
+
+- Beef and leather (from same cow)
+- Pork and lard (from same pig)
+- ↑ Demand for beef → ↑ beef production → ↑ leather supply
+
+## Knowledge Check: Production Relationships
+
+**A drought devastates corn crops. Farmers can grow either corn or soybeans on their land. What happens in the soybean market?**
+
+\vskip0.5em
+
+a) Supply of soybeans increases
+
+b) Supply of soybeans decreases
+
+c) Demand for soybeans increases
+
+d) Quantity supplied of soybeans increases
+
+\vskip2em
+
+\onslide<2->{
+::: {.block}
+**Answer:** (a)
+Corn and soybeans are **substitutes in production**. When corn crops fail, farmers switch their land to soybeans → supply of soybeans increases (shifts right).
+:::
+}
+
+## Supply Shifter 3: Technology
+
+Better technology lowers production costs:
+
+\vskip0.5em
+
+**Examples:**
+- Precision agriculture: GPS-guided tractors → less waste, better yields
+- Industrial automation: robots → lower labor costs per unit
+- AI and machine learning: optimized logistics → reduced shipping costs
+
+\vskip1em
+
+**Key feature:** Technology improvements are usually **permanent**
+
+- Once adopted, they become the new standard
+- Competitors must adopt or risk being priced out
+
+\vskip1em
+
+::: {.block}
+#### Result
+Better technology → ↓ costs → ↑ supply (shift right)
+:::
+
+## Supply Shifters 4-5: Expectations and Sellers
+
+**4. Expectations**
+- Expect higher future prices → ↓ supply today (save inventory)
+- Expect lower future prices → ↑ supply today (sell now!)
+- Example: Oil companies withhold production when expecting price increases
+
+\vskip1em
+
+**5. Number of Producers**
+- More sellers enter market → ↑ supply
+- Sellers exit market → ↓ supply
+- Entry/exit depends on profitability and barriers to entry
+- Example: Legal marijuana → hundreds of new producers entered market → ↑ supply
+
+## Knowledge Check: Supply Shifters
+
+**Green Mountain Solar knows the government is phasing out solar tax credits in two years. What supply shifter best describes this?**
+
+\vskip0.5em
+
+a) Input prices
+
+b) Prices of related goods
+
+c) Technology
+
+d) Expectations
+
+e) Number of sellers
+
+\vskip2em
+
+\onslide<2->{
+::: {.block}
+**Answer:** (d) Expectations
+Anticipating less favorable conditions in the future affects production decisions today.
+:::
+}
+
+# Part III: Market Equilibrium
+
+## Finding Equilibrium: Where Supply Meets Demand
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+ggplot() +
+  # Supply and demand curves
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.6) +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.6) +
+  # Equilibrium point
+  geom_point(aes(x = eq_Q, y = eq_P), size = 6, color = col_equilibrium) +
+  # Dashed lines to axes
+  geom_segment(aes(x = eq_Q, y = 0, xend = eq_Q, yend = eq_P),
+               linetype = "dashed", color = "gray50", linewidth = 0.7) +
+  geom_segment(aes(x = 0, y = eq_P, xend = eq_Q, yend = eq_P),
+               linetype = "dashed", color = "gray50", linewidth = 0.7) +
+  # Labels
+  annotate("text", x = 13.5, y = 0.85, label = "Demand",
+           color = col_demand, size = 6.5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 13.5, y = 1.95, label = "Supply",
+           color = col_supply, size = 6.5, hjust = 0, fontface = "bold") +
+  annotate("text", x = eq_Q + 0.4, y = eq_P + 0.15, label = "E",
+           size = 8, fontface = "bold", color = col_equilibrium) +
+  annotate("text", x = 6, y = eq_P + 0.05, label = "P*",
+           size = 5, fontface = "bold", color = col_equilibrium) +
+  annotate("text", x = eq_Q, y = 0.35, label = "Q*",
+           size = 5, fontface = "bold", color = col_equilibrium) +
+  # Scales
+  scale_x_continuous(name = "Quantity of cotton (billions of pounds)",
+                     breaks = seq(7, 15, by = 2),
+                     limits = c(6.5, 15.5),
+                     expand = c(0, 0)) +
+  scale_y_continuous(name = "Price of cotton (per pound)",
+                     breaks = seq(0.25, 2.0, by = 0.25),
+                     limits = c(0.2, 2.1),
+                     labels = dollar,
+                     expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+**Equilibrium:** Price where quantity demanded = quantity supplied. No shortage, no surplus.
+:::
+
+## Surplus: When Price is Too High
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+high_price <- 1.50
+Qd_high <- 8.1
+Qs_high <- 11.2
+
+ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.5) +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.5) +
+  # Equilibrium
+  geom_point(aes(x = eq_Q, y = eq_P), size = 4, color = "gray60") +
+  # Points at high price
+  geom_point(aes(x = Qd_high, y = high_price), size = 4, color = col_demand) +
+  geom_point(aes(x = Qs_high, y = high_price), size = 4, color = col_supply) +
+  # Surplus bracket
+  geom_segment(aes(x = Qd_high, y = high_price + 0.08,
+                   xend = Qs_high, yend = high_price + 0.08),
+               color = "#E57373", linewidth = 1.5,
+               arrow = arrow(ends = "both", length = unit(0.2, "cm"))) +
+  annotate("text", x = (Qd_high + Qs_high)/2, y = high_price + 0.22,
+           label = "SURPLUS",
+           color = "#E57373", size = 5, fontface = "bold") +
+  # Horizontal line at high price
+  geom_segment(aes(x = 0, y = high_price, xend = Qs_high, yend = high_price),
+               linetype = "dashed", color = "gray50", linewidth = 0.6) +
+  # Labels
+  annotate("text", x = Qd_high, y = high_price - 0.15,
+           label = "Qd", color = col_demand, size = 4, fontface = "bold") +
+  annotate("text", x = Qs_high, y = high_price - 0.15,
+           label = "Qs", color = col_supply, size = 4, fontface = "bold") +
+  annotate("text", x = 13.5, y = 0.85, label = "D",
+           color = col_demand, size = 6, hjust = 0, fontface = "bold") +
+  annotate("text", x = 13.5, y = 1.95, label = "S",
+           color = col_supply, size = 6, hjust = 0, fontface = "bold") +
+  annotate("text", x = eq_Q + 0.3, y = eq_P, label = "E",
+           size = 6, fontface = "bold", color = "gray60") +
+  scale_x_continuous(name = "Quantity",
+                     breaks = c(Qd_high, eq_Q, Qs_high),
+                     labels = c("8.1", "10.0", "11.2"),
+                     limits = c(7, 15.5),
+                     expand = c(0, 0)) +
+  scale_y_continuous(name = "Price",
+                     breaks = c(eq_P, high_price),
+                     labels = c("$1.00", "$1.50"),
+                     limits = c(0.45, 2.0),
+                     expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+**Surplus** → Sellers lower prices to clear excess inventory → moves toward equilibrium
+:::
+
+## Shortage: When Price is Too Low
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+low_price <- 0.75
+Qd_low <- 11.5
+Qs_low <- 9.1
+
+ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.5) +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.5) +
+  # Equilibrium
+  geom_point(aes(x = eq_Q, y = eq_P), size = 4, color = "gray60") +
+  # Points at low price
+  geom_point(aes(x = Qs_low, y = low_price), size = 4, color = col_supply) +
+  geom_point(aes(x = Qd_low, y = low_price), size = 4, color = col_demand) +
+  # Shortage bracket
+  geom_segment(aes(x = Qs_low, y = low_price - 0.08,
+                   xend = Qd_low, yend = low_price - 0.08),
+               color = "#E57373", linewidth = 1.5,
+               arrow = arrow(ends = "both", length = unit(0.2, "cm"))) +
+  annotate("text", x = (Qs_low + Qd_low)/2, y = low_price - 0.20,
+           label = "SHORTAGE",
+           color = "#E57373", size = 5, fontface = "bold") +
+  # Horizontal line at low price
+  geom_segment(aes(x = 0, y = low_price, xend = Qd_low, yend = low_price),
+               linetype = "dashed", color = "gray50", linewidth = 0.6) +
+  # Labels
+  annotate("text", x = Qs_low, y = low_price + 0.12,
+           label = "Qs", color = col_supply, size = 4, fontface = "bold") +
+  annotate("text", x = Qd_low, y = low_price + 0.12,
+           label = "Qd", color = col_demand, size = 4, fontface = "bold") +
+  annotate("text", x = 13.5, y = 0.85, label = "D",
+           color = col_demand, size = 6, hjust = 0, fontface = "bold") +
+  annotate("text", x = 13.5, y = 1.95, label = "S",
+           color = col_supply, size = 6, hjust = 0, fontface = "bold") +
+  annotate("text", x = eq_Q + 0.3, y = eq_P, label = "E",
+           size = 6, fontface = "bold", color = "gray60") +
+  scale_x_continuous(name = "Quantity",
+                     breaks = c(Qs_low, eq_Q, Qd_low),
+                     labels = c("9.1", "10.0", "11.5"),
+                     limits = c(7, 15.5),
+                     expand = c(0, 0)) +
+  scale_y_continuous(name = "Price",
+                     breaks = c(low_price, eq_P),
+                     labels = c("$0.75", "$1.00"),
+                     limits = c(0.45, 2.0),
+                     expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+**Shortage** → Buyers bid prices up to secure scarce goods → moves toward equilibrium
+:::
+
+## Knowledge Check: Shortage or Surplus?
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+# Generic supply and demand
+gen_supply <- create_supply(intercept = 1, slope = 0.3, Q_range = c(4, 20))
+gen_demand <- create_demand(intercept = 7, slope = -0.3, Q_range = c(4, 20))
+
+ggplot() +
+  geom_line(data = gen_supply, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.4) +
+  geom_line(data = gen_demand, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.4) +
+  geom_point(aes(x = 10, y = 4), size = 4, color = col_equilibrium) +
+  annotate("text", x = 16, y = 2.4, label = "D",
+           color = col_demand, size = 5.5, fontface = "bold") +
+  annotate("text", x = 16, y = 7.0, label = "S",
+           color = col_supply, size = 5.5, fontface = "bold") +
+  annotate("text", x = 10.5, y = 4.4, label = "E",
+           size = 6, fontface = "bold", color = col_equilibrium) +
+  geom_hline(yintercept = 5, linetype = "dashed", color = "#E57373", linewidth = 0.8) +
+  annotate("text", x = 18, y = 5.3, label = "Price = $5",
+           color = "#E57373", size = 4, fontface = "bold") +
+  scale_x_continuous(name = "Quantity",
+                     limits = c(4, 20), expand = c(0, 0)) +
+  scale_y_continuous(name = "Price",
+                     limits = c(1, 8), labels = dollar, expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+**At \$5, is there a shortage or surplus?**
+
+\onslide<2->{
+::: {.block}
+**Answer: Surplus.** At \$5 (above equilibrium), Qs > Qd → excess supply.
+:::
+}
+
+# Part IV: Putting It All Together
+
+## When Demand Increases
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+demand_inc <- create_demand(intercept = 3.0)
+eq_Q2 <- 12.5
+eq_P2 <- 1.375
+
+ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.5) +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.3, alpha = 0.5, linetype = "dashed") +
+  geom_line(data = demand_inc, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.5) +
+  geom_point(aes(x = eq_Q, y = eq_P), size = 5, color = "gray60") +
+  geom_point(aes(x = eq_Q2, y = eq_P2), size = 5, color = col_equilibrium) +
+  geom_segment(aes(x = 10, y = 1.0, xend = 12, yend = 1.0),
+               arrow = arrow(length = unit(0.3, "cm")),
+               color = col_shift, linewidth = 1.3) +
+  annotate("text", x = 13, y = 0.85, label = expression(D[1]),
+           color = col_demand, size = 5, alpha = 0.5) +
+  annotate("text", x = 13, y = 1.4, label = expression(D[2]),
+           color = col_demand, size = 5, fontface = "bold") +
+  annotate("text", x = 13, y = 1.85, label = "S",
+           color = col_supply, size = 5, fontface = "bold") +
+  scale_x_continuous(name = "Quantity", limits = c(7, 15), expand = c(0, 0)) +
+  scale_y_continuous(name = "Price", limits = c(0.45, 2.0), labels = dollar, expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+**Result:** Price ↑ and Quantity ↑ **(Both certain)**
+:::
+
+\vskip-0.5em
+{\small \textit{Animation: See `images/demand\_increase.gif` for dynamic visualization}}
+
+## When Supply Decreases
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+supply_dec <- create_supply(intercept = -0.1, slope = 0.15)
+eq_Q3 <- 8.67
+eq_P3 <- 1.20
+
+ggplot() +
+  geom_line(data = supply_std, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.3, alpha = 0.5, linetype = "dashed") +
+  geom_line(data = supply_dec, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.5) +
+  geom_line(data = demand_std, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.5) +
+  geom_point(aes(x = eq_Q, y = eq_P), size = 5, color = "gray60") +
+  geom_point(aes(x = eq_Q3, y = eq_P3), size = 5, color = col_equilibrium) +
+  geom_segment(aes(x = 10, y = 1.0, xend = 8.5, yend = 1.0),
+               arrow = arrow(length = unit(0.3, "cm")),
+               color = "#E57373", linewidth = 1.3) +
+  annotate("text", x = 13, y = 1.45, label = expression(S[1]),
+           color = col_supply, size = 5, alpha = 0.5) +
+  annotate("text", x = 13, y = 1.85, label = expression(S[2]),
+           color = col_supply, size = 5, fontface = "bold") +
+  annotate("text", x = 13, y = 0.85, label = "D",
+           color = col_demand, size = 5, fontface = "bold") +
+  scale_x_continuous(name = "Quantity", limits = c(7, 15), expand = c(0, 0)) +
+  scale_y_continuous(name = "Price", limits = c(0.45, 2.0), labels = dollar, expand = c(0, 0)) +
+  theme_modern_econ()
+```
+
+::: {.block}
+**Result:** Price ↑ and Quantity ↓ **(Both certain)**
+:::
+
+\vskip-0.5em
+{\small \textit{Animation: See `images/supply\_decrease.gif` for dynamic visualization}}
+
+## Practice: Predicting Market Changes
+
+**If the cost of wood falls, what happens to equilibrium price and quantity in the violin market?**
+
+\vskip0.5em
+
+Think about:
+1. Which curve shifts? (Supply or demand?)
+2. Which direction? (Left or right?)
+3. What happens to P* and Q*?
+
+\vskip2em
+
+\onslide<2->{
+::: {.block}
+**Answer:**
+Wood is an input → ↓ input prices → ↑ supply (shift right) → ↓ P* and ↑ Q*
+:::
+}
+
+## Simultaneous Shifts: Handle with Care
+
+**Example: iPhone launch**
+
+When Apple releases a new iPhone:
+1. Consumer excitement → **demand increases** (curve shifts right)
+2. Apple ramps up production → **supply increases** (curve shifts right)
+
+\vskip1em
+
+**What happens to equilibrium?**
+
+:::: {.columns}
+::: {.column width="48%"}
+Both shifts push **quantity** in the same direction:
+- ↑ Demand → Q ↑
+- ↑ Supply → Q ↑
+- **Result: Q ↑ (certain)**
+:::
+
+::: {.column width="48%"}
+But shifts push **price** in opposite directions:
+- ↑ Demand → P ↑
+- ↑ Supply → P ↓
+- **Result: P ? (ambiguous)**
+:::
+::::
+
+\vskip0.5em
+
+::: {.block}
+#### General Rule
+When both curves shift, if the effects on P or Q work in the **same direction** → certain change. If **opposite directions** → ambiguous (depends on relative magnitudes).
+:::
+
+\vskip0.5em
+
+**Interactive Demo:** Open `interactive_simultaneous_shifts_v2.html` - use sliders to shift curves and see effects decomposed!
+
+# Real-World Application: The Vanilla Crisis
+
+## Remember This?
+
+**How much does a 4oz bottle of pure vanilla extract cost?**
+
+a) \$4
+
+b) \$7
+
+c) \$10
+
+d) \$18
+
+e) \$20
+
+## The Vanilla Market: 2017
+
+::: {.columns}
+:::: {.column width="35%"}
+\begin{center}
+\includegraphics[width=\linewidth,height=0.65\textheight,keepaspectratio]{images/vanilla_beans.jpg}
+
+{\small \textit{Madagascar vanilla beans}}
+\end{center}
+::::
+
+:::: {.column width="65%"}
+**What happened:**
+
+- Vanilla prices: \$20/kg (2010) → \$500/kg (2017)
+- **25× increase in 7 years**
+
+\vskip0.5em
+
+**Why:**
+
+1. Cyclone damaged 30% of Madagascar crop (supply ↓)
+2. "All-natural" food trend (demand ↑)
+3. Major brands (Nestlé, Hershey's) switched from synthetic to natural vanilla (demand ↑↑)
+
+\vskip0.5em
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+# Vanilla price data (simplified)
+vanilla_data <- data.frame(
+  Year = c(2010, 2012, 2014, 2015, 2016, 2017),
+  Price = c(20, 25, 30, 50, 200, 500)
+)
+
+ggplot(vanilla_data, aes(x = Year, y = Price)) +
+  geom_line(color = col_supply, linewidth = 1.3) +
+  geom_point(color = col_supply, size = 3) +
+  scale_y_continuous(name = "Price ($/kg)",
+                     limits = c(0, 600),
+                     labels = dollar,
+                     expand = c(0, 0)) +
+  scale_x_continuous(name = "",
+                     breaks = c(2010, 2012, 2014, 2016, 2017)) +
+  ggtitle("Vanilla Bean Prices") +
+  theme_modern_econ()
+```
+::::
+:::
+
+## Vanilla: Supply and Demand Analysis
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+# Stylized vanilla market
+vanilla_D1 <- create_demand(intercept = 80, slope = -4, Q_range = c(5, 20))
+vanilla_D2 <- create_demand(intercept = 120, slope = -4, Q_range = c(5, 25))
+vanilla_S1 <- create_supply(intercept = 10, slope = 3, Q_range = c(5, 20))
+vanilla_S2 <- create_supply(intercept = 20, slope = 3, Q_range = c(5, 20))
+
+# Original eq: S1 and D1 intersect around Q=10, P=40
+# New eq: S2 and D2 intersect around Q=13, P=70
+
+ggplot() +
+  # Original curves (faded)
+  geom_line(data = vanilla_S1, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.2, alpha = 0.4, linetype = "dashed") +
+  geom_line(data = vanilla_D1, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.2, alpha = 0.4, linetype = "dashed") +
+  # New curves
+  geom_line(data = vanilla_S2, aes(x = Q, y = P),
+            color = col_supply, linewidth = 1.5) +
+  geom_line(data = vanilla_D2, aes(x = Q, y = P),
+            color = col_demand, linewidth = 1.5) +
+  # Original equilibrium
+  geom_point(aes(x = 10, y = 40), size = 4, color = "gray60") +
+  # New equilibrium
+  geom_point(aes(x = 13.33, y = 70), size = 5, color = col_equilibrium) +
+  # Arrows
+  geom_segment(aes(x = 10, y = 40, xend = 8, yend = 40),
+               arrow = arrow(length = unit(0.25, "cm")),
+               color = "#E57373", linewidth = 1) +
+  geom_segment(aes(x = 10, y = 40, xend = 16, yend = 40),
+               arrow = arrow(length = unit(0.25, "cm")),
+               color = col_shift, linewidth = 1) +
+  annotate("text", x = 6.5, y = 37,
+           label = "Supply ↓\n(cyclone)", color = "#E57373", size = 3.5, fontface = "bold") +
+  annotate("text", x = 17.5, y = 37,
+           label = "Demand ↑\n(all-natural trend)", color = col_shift, size = 3.5, fontface = "bold") +
+  # Labels
+  annotate("text", x = 18.5, y = 20, label = expression(D[1]),
+           color = col_demand, size = 5, alpha = 0.4) +
+  annotate("text", x = 22, y = 40, label = expression(D[2]),
+           color = col_demand, size = 5, fontface = "bold") +
+  annotate("text", x = 18.5, y = 65, label = expression(S[1]),
+           color = col_supply, size = 5, alpha = 0.4) +
+  annotate("text", x = 18.5, y = 75, label = expression(S[2]),
+           color = col_supply, size = 5, fontface = "bold") +
+  annotate("text", x = 9.5, y = 35, label = "2010",
+           size = 4, color = "gray60") +
+  annotate("text", x = 14, y = 74, label = "2017",
+           size = 4.5, fontface = "bold", color = col_equilibrium) +
+  scale_x_continuous(name = "Quantity",
+                     limits = c(5, 25), expand = c(0, 0)) +
+  scale_y_continuous(name = "Price ($/kg)",
+                     limits = c(0, 140), labels = dollar, expand = c(0, 0)) +
+  ggtitle("The Vanilla Crisis: Simultaneous Shifts") +
+  theme_modern_econ()
+```
+
+::: {.block}
+Supply ↓ **and** Demand ↑ → Price ↑↑ (certain), Quantity ? (ambiguous, but increased)
+:::
+
+## The Market Response
+
+By 2019-2020, vanilla prices began falling:
+
+\vskip1em
+
+**Why?**
+
+1. **High prices incentivized production** → farmers planted more vanilla → ↑ supply
+
+2. **Substitution** → some manufacturers switched back to synthetic vanillin → ↓ demand
+
+3. **Recovery** → Madagascar crop recovered → ↑ supply
+
+\vskip1.5em
+
+::: {.block}
+#### Classic Market Dynamics
+High prices signal scarcity → encourage production and substitution → prices adjust back toward equilibrium
+:::
+
+# Conclusion
+
+## Key Takeaways
+
+1. **Demand curves slope down**, supply curves slope up
+
+2. **Movements** happen along curves when price changes; **shifts** happen when non-price factors change
+
+3. **TRIBE** shifts demand: Tastes, Related goods, Income, Buyers, Expectations
+
+4. **TONER** shifts supply: Technology, Other goods, Number of producers, Expectations, Resource costs
+
+5. **Equilibrium** balances Qd and Qs; surpluses and shortages push price toward equilibrium
+
+6. **Price and quantity changes** depend on which curve shifts and in what direction
+
+## Final Knowledge Check
+
+**Garden gnomes regain popularity. What happens to equilibrium?**
+
+a) P ↑, Q ↑
+
+b) P ↑, Q ↓
+
+c) P ↓, Q ↑
+
+d) P ↓, Q ↓
+
+\vskip2em
+
+\onslide<2->{
+::: {.block}
+**Answer: (a)** Tastes → demand shifts right → P ↑ and Q ↑
+
+This is the type of reasoning you'll use throughout the course!
+:::
+}
+
+## Next Time
+
+**Chapter 6: Elasticity**
+
+- How responsive is quantity to price changes?
+- Why do some price changes barely affect quantity while others cause huge swings?
+- What determines whether sellers or buyers bear the burden of a tax?
+
+\vskip1.5em
+
+::: {.block}
+### Before Next Class
+- Review TRIBE and TONER
+- Practice: For each news story you see this week, ask: "Which curve shifted? Which direction?"
+:::
+
+#
+
+\begin{center}
+{\Huge\textbf{Thank You}}
+
+\vskip2em
+
+Questions?
+
+\vskip3em
+
+{\large ECON 1450: Principles of Microeconomics}
+
+University of Vermont
+
+\end{center}
